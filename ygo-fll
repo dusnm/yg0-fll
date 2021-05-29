@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+import sys
+from src.parse_arguments import parse_arguments
+from src.get_data import get_data
+from src.parse_data import parse_table
+from src.parse_data import filter_table_make_diff, filter_table_make_subset
+from src.cache_result import cache_result, get_from_cache, clear_cache
+from src.print_data import print_data
+
+if __name__ == '__main__':
+    args = parse_arguments()
+
+    if not args.all and \
+       not args.diff and \
+       not args.forbidden and \
+       not args.limited and \
+       not args.semi_limited and \
+       not args.unlimited and \
+       not args.clear_cache:
+           print('No action provided, aborting.')
+           sys.exit(-1)
+
+    if args.clear_cache:
+        clear_cache()
+        sys.exit()
+
+    url = 'https://img.yugioh-card.com/uk/gameplay/detail.php?id=1155'
+    data = get_from_cache()
+    output_format = args.output_format
+
+    if data == None:
+        data = get_data(url)
+
+        if data == None:
+            print('Unable to retreive list information.')
+            sys.exit(-1)
+
+        data = parse_table(data)
+        cache_result(data)
+
+
+    if args.all:
+        print_data(data, output_format)
+    elif args.diff:
+        print_data(filter_table_make_diff(data), output_format)
+    elif args.forbidden:
+        print_data(filter_table_make_subset(data, 'Forbidden'), output_format)
+    elif args.limited:
+        print_data(filter_table_make_subset(data, 'Limited'), output_format)
+    elif args.semi_limited:
+        print_data(filter_table_make_subset(data, 'Semi-Limited'), output_format)
+    elif args.unlimited:
+        print_data(filter_table_make_subset(data, 'Unlimited'), output_format)
