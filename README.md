@@ -64,7 +64,7 @@ You can chain the output format option to any command to select a different outp
 The default is table, but json is also available.
 
 ```shell
-ygo-fll -o json
+ygo-fll -d -o json
 ```
 
 Once again, long options are also supported.
